@@ -1,0 +1,71 @@
+Project title: bright-poker
+
+The task today will be to create an algorithm that ranks a set of poker hands using TEXAS HOLD-EM rules (5 community cards, 2 private cards) for 2-6 players, and then ranks those hands from best to worst according to traditional poker hand ranking rules.  If you're unfamiliar with the ranking rules of poker, below is a reference to how poker hands are ranked.
+
+Built using:
+PHP 5.4.17 (cli) (built: Jul  3 2013 21:38:03)
+Copyright (c) 1997-2013 The PHP Group
+Zend Engine v2.4.0, Copyright (c) 1998-2013 Zend Technologies
+
+main.php
+===
+Usage: php main.php
+
+card.class.php
+===
+this fundamental class creates card objects that contains:
+$number - the card value, 2-14, 11 is Jack ... 14 is Ace
+$suit - of string value, either "Clubs", "Spades", "Hearts", or "Diamonds"
+getCard() - returns a string in this format "{value} of {suit}"
+
+cardstack.class.php
+===
+instances of cardstack hold the card objects it contains
+$cards - array that will hold the card objects
+show_cards() - prints all card objects with getCard()
+count_cards() - returns the number of remaining cards in that stack
+
+deck.class.php
+===
+is a subclass of cardstack, generates a standard playing deck
+$highestNumber - stores the value of the highest ranking card
+shuffle() - shuffles the $cards array
+deal($hands) - pop card objects that this cardstack contains and distribute them to $hands
+  $hands - array of playing hands/players
+
+hand.class.php
+===
+is a subclass of cardstack, used for holding player cards
+$hand_limit - the number of cards a hand can contain
+canReceive() - check if $hand_limit is reached
+receiveCard($card) - add $card to own $cards array
+  $card - card object
+
+poker.class.php
+===
+class containing static functions for processing poker hands
+bestScore($cards) - returns the highest score returned by the functions below, technically selecting the 5 best cards to play
+isStraightFlush($cards) - detects if hand is either "Royal flush", "Straight flush", or "Flush"
+  returns a hand scores array*
+  returns 0 if not among the 3
+isStraight($cards) - straight
+xOfAKind($cards, $num) - ($num) 3 or 4 of a kind, full house
+findPairs($cards, $ignore_num = 0) 2 or 1 pair, high card
+kicker($cards, $quantity, $ignore_num = array() ) - generates a kicker array based on conditions
+  $quantity - number of kickers to get from the hand
+  $ignore_num - cards that are already part of the playing hand
+card_cmp($a, $b) - used for sorting cards in ascending order
+card_rcmp($a, $b) - used for sorting cards in descending order
+score_rcmp($a, $b) - used for sorting scores in descending order
+
+hand scores array = holds one or more score
+[0] - the first element contains the base score of the type of hand (X00) + highest ranking card (0XX)
+    - Royal flush is given a 900 auto
+    - Flush is 5XX points
+    - High card is 0XX points
+[1..x]  - contains the score of the second highest ranking card if [0] is a tie
+        - kicker
+
+
+BEN ADRIAN SARMIENTO
+July 31, 2013 5:38AM
